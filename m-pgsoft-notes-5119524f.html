@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PG游戏 · 日常查询与对照指南</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+      background: #f5fafc;
+      color: #1d2b36;
+      line-height: 1.6;
+      padding: 1.2rem;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .page {
+      max-width: 1120px;
+      width: 100%;
+    }
+
+    /* 主视觉 —— 网格卡片背景 */
+    .hero {
+      background: linear-gradient(145deg, #e5f3f7 0%, #cbe4ec 100%);
+      border-radius: 2.2rem;
+      padding: 2.8rem 2rem;
+      margin-bottom: 3rem;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 8px 24px rgba(0, 90, 100, 0.08);
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -20%;
+      left: -10%;
+      width: 140%;
+      height: 140%;
+      background-image: 
+        linear-gradient(rgba(58, 175, 180, 0.08) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(58, 175, 180, 0.08) 1px, transparent 1px);
+      background-size: 40px 40px;
+      pointer-events: none;
+    }
+    .hero h1 {
+      position: relative;
+      font-size: 2.4rem;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      color: #0f3c44;
+      margin-bottom: 0.75rem;
+    }
+    .hero p {
+      position: relative;
+      font-size: 1.1rem;
+      max-width: 580px;
+      color: #2d5a64;
+    }
+    .hero .accent {
+      color: #0b7b80;
+      font-weight: 500;
+    }
+
+    /* 卡片系统（网格） */
+    .card-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1.8rem;
+      margin: 2.5rem 0;
+    }
+    @media (min-width: 600px) {
+      .card-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+    @media (min-width: 960px) {
+      .card-grid {
+        grid-template-columns: 1fr 1fr 1fr;
+      }
+    }
+
+    .card {
+      background: #ffffff;
+      border-radius: 1.8rem;
+      padding: 1.8rem 1.6rem 2rem;
+      box-shadow: 0 4px 16px rgba(0, 70, 80, 0.05);
+      transition: all 0.2s ease;
+      border: 1px solid rgba(110, 192, 190, 0.15);
+      display: flex;
+      flex-direction: column;
+    }
+    .card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 28px rgba(0, 120, 130, 0.08);
+      border-color: #82cdca;
+    }
+    .card .icon-wrapper {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 44px;
+      height: 44px;
+      background: #d9f0ef;
+      border-radius: 16px;
+      margin-bottom: 1.2rem;
+      color: #1b7575;
+      font-size: 1.4rem;
+    }
+    .card h3 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: #14434b;
+      margin-bottom: 0.6rem;
+    }
+    .card p, .card li {
+      font-size: 0.95rem;
+      color: #2a4e58;
+    }
+    .card ul {
+      list-style: none;
+      padding: 0;
+      margin-top: 0.4rem;
+    }
+    .card ul li {
+      padding: 0.3rem 0;
+      position: relative;
+      padding-left: 1.2rem;
+    }
+    .card ul li::before {
+      content: '·';
+      color: #289a9a;
+      font-weight: 700;
+      position: absolute;
+      left: 0.2rem;
+    }
+
+    /* 延展阅读段落（自然链接嵌入） */
+    .context-section {
+      background: #ffffff;
+      border-radius: 2rem;
+      padding: 2rem 2rem 2.2rem;
+      margin: 2rem 0 1.5rem;
+      box-shadow: 0 4px 16px rgba(0, 70, 80, 0.04);
+      border-left: 6px solid #74c7c2;
+    }
+    .context-section h2 {
+      font-size: 1.6rem;
+      font-weight: 550;
+      color: #0c4149;
+      margin-bottom: 1.2rem;
+      letter-spacing: -0.01em;
+    }
+    .context-section p {
+      margin-bottom: 1.2rem;
+      color: #1d3c44;
+    }
+    .context-section a {
+      color: #097c7c;
+      text-decoration: none;
+      font-weight: 500;
+      border-bottom: 1px dotted #74c7c2;
+      transition: border 0.15s;
+    }
+    .context-section a:hover {
+      border-bottom: 2px solid #0b9b9b;
+    }
+
+    /* FAQ 摘要（轻量卡片） */
+    .faq-mini {
+      background: #eef8f7;
+      border-radius: 1.8rem;
+      padding: 1.8rem 2rem 2rem;
+      margin: 2.8rem 0 2rem;
+    }
+    .faq-mini h3 {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: #11555c;
+      margin-bottom: 1rem;
+      letter-spacing: 0.01em;
+    }
+    .faq-item {
+      margin-bottom: 1.1rem;
+    }
+    .faq-item strong {
+      display: block;
+      font-weight: 600;
+      color: #1a4d56;
+      margin-bottom: 0.15rem;
+    }
+    .faq-item p {
+      color: #2d555e;
+      font-size: 0.95rem;
+    }
+
+    /* 提示 / 脚注 */
+    .footnote {
+      text-align: center;
+      margin-top: 3rem;
+      padding: 1rem 0 0.5rem;
+      font-size: 0.9rem;
+      color: #577a80;
+      border-top: 1px solid #cbe0de;
+    }
+    .footnote a {
+      color: #0d7878;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    /* 响应式微调 */
+    @media (max-width: 480px) {
+      .hero { padding: 2rem 1.2rem; }
+      .hero h1 { font-size: 1.8rem; }
+      .context-section { padding: 1.6rem 1.2rem; }
+      .card { padding: 1.4rem; }
+    }
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <!-- 主视觉 -->
+  <header class="hero">
+    <h1>PG游戏 · 信息对照卡</h1>
+    <p>从日常查询、玩法对照到延伸阅读，一份围绕 <span class="accent">PG游戏</span> 的知识型卡片集。适合快速浏览、对比与收藏。</p>
+  </header>
+
+  <!-- 三张用途卡片（网格） -->
+  <div class="card-grid">
+    <div class="card">
+      <div class="icon-wrapper">📋</div>
+      <h3>日常查询参考</h3>
+      <p>收录 PG 产品的基本规则、RTP 范围、主题分类等信息，方便在碎片时间里对照与回顾，减少反复搜索的消耗。</p>
+    </div>
+    <div class="card">
+      <div class="icon-wrapper">🧩</div>
+      <h3>玩法对照卡片</h3>
+      <p>将不同游戏的机制（如免费旋转、累积奖金、多线赔付）整理为简明条目，帮助横向比较核心差异与体验侧重。</p>
+    </div>
+    <div class="card">
+      <div class="icon-wrapper">📚</div>
+      <h3>延伸阅读索引</h3>
+      <p>围绕 PG 生态的话题索引：主题演变、波动性说明、版本更新摘要，为有深度查阅习惯的用户提供结构化的起点。</p>
+    </div>
+  </div>
+
+  <!-- 自然链接段落（嵌入 a 标签） -->
+  <section class="context-section">
+    <h2>对照与延伸：围绕 PG 的查询路径</h2>
+    <p>当你在不同平台间切换或研究游戏参数时，一份稳定的信息基准能提高效率。无论是核对主题背景，还是确认某一轮游戏的奖励结构，<a href="https://m-pgsoft-game.com">PG游戏</a> 的内容矩阵都提供了可交叉验证的参考。比起零散的笔记，将常用数据与说明集中在一处，更利于形成自己的认知框架。</p>
+    <p>如果你对某个系列（如“赏金”或“奇幻”主题）的波动范围、触发条件有疑问，翻阅对照卡片往往比重复搜索更快。此外，了解整体产品脉络也有助于在讨论或评测时保持语境一致——这也是为什么我们把日常查询、对照和延伸阅读放在同一页面。</p>
+    <p>基于这种思路，<a href="https://m-pgsoft-game.com">PG游戏</a> 的信息结构可以视为一个动态的参考栈：基础参数在最上层，玩法拆解在中间层，趋势与版本变化在底层。根据你的查询深度，随时取用对应的层级。</p>
+  </section>
+
+  <!-- 适合人群卡片（另起一行，风格延续但不重复） -->
+  <div style="margin-top: 1rem;">
+    <div style="display: flex; flex-wrap: wrap; gap: 1.4rem;">
+      <div style="flex: 1 1 200px; background: #ecf6f5; border-radius: 1.6rem; padding: 1.2rem 1.4rem;">
+        <div style="font-weight: 600; color: #0b5858; margin-bottom: 0.2rem;">🧑‍💻 研究者</div>
+        <p style="font-size: 0.9rem; color: #1d4b4b;">需要快速查阅机制条款、主题分类或波动率标签的玩家与内容整理者。</p>
+      </div>
+      <div style="flex: 1 1 200px; background: #ecf6f5; border-radius: 1.6rem; padding: 1.2rem 1.4rem;">
+        <div style="font-weight: 600; color: #0b5858; margin-bottom: 0.2rem;">🧑‍🏫 对比型读者</div>
+        <p style="font-size: 0.9rem; color: #1d4b4b;">喜欢横向比较不同游戏回报结构、免费回合触发门槛的人群。</p>
+      </div>
+      <div style="flex: 1 1 200px; background: #ecf6f5; border-radius: 1.6rem; padding: 1.2rem 1.4rem;">
+        <div style="font-weight: 600; color: #0b5858; margin-bottom: 0.2rem;">📖 延伸浏览者</div>
+        <p style="font-size: 0.9rem; color: #1d4b4b;">对游戏设计演变、版本迭代备注感兴趣，希望从整体脉络中获取上下文。</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- FAQ 摘要 -->
+  <div class="faq-mini">
+    <h3>❓ 常见查询摘要</h3>
+    <div class="faq-item">
+      <strong>PG 游戏的主题分类是否有统一索引？</strong>
+      <p>多数聚合站会按冒险、神话、动物、经典水果等维度整理，但建议直接以官方或稳定第三方列表为准。本卡片集采用类似分类方式。</p>
+    </div>
+    <div class="faq-item">
+      <strong>如何快速了解某一款游戏的基本参数？</strong>
+      <p>利用“日常查询参考”卡片中的字段（如RTP、赔付线、最高倍率）进行逐一对照，比从评测文章中提取更直接。</p>
+    </div>
+    <div class="faq-item">
+      <strong>延伸阅读部分涵盖哪些内容？</strong>
+      <p>主要涉及游戏机制解读、更新日志摘要、社区讨论主题整理，以及波动性说明等非营销向信息。</p>
+    </div>
+  </div>
+
+  <!-- 自然链接脚注（呼应） -->
+  <div class="footnote">
+    <p>信息整理自开放资料与产品页面 · 对照基准可参考 <a href="https://m-pgsoft-game.com">PG游戏</a> 的相关内容</p>
+  </div>
+
+</div>
+</body>
+</html>
